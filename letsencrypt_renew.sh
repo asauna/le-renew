@@ -5,7 +5,7 @@ email="root@asauna.io"
 reload_services="postfix nginx"
 restart_services="dovecot"
 
-test="./letsencrypt-auto renew --agree-tos --email $email"
+test="./letsencrypt-auto renew --agree-tos --dry-run --email $email"
 
 if [ "$(id -u)" != "0" ]; then
 	echo "This script must be run as root"
@@ -15,9 +15,7 @@ fi
 if [ -d "$install_dir" ]
 then
 	cd $install_dir
-	$test
-
-	if [[ $(test | grep -q "No renewals were") -eq 0 ]];
+	if [[ $( $test | grep -q "No renewals were") -eq 1 ]];
 	then
 		# Reload services
 		for srv in $reload_services; do
